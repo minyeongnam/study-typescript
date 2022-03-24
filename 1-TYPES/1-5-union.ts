@@ -37,5 +37,12 @@
   // fail -> "실패" reason
   // console.log로 출력
 
-  function printLoginState(state: LoginState) {}
+  function printLoginState(state: LoginState) {
+    if ("response" in state) {
+      // in 으로 하는것도 가능하지만 좋지 못한 방법
+      console.log(`성공 ${state.response.body}`);
+    } else {
+      console.log(`실패 ${state.reason}`);
+    }
+  }
 }
