@@ -12,7 +12,13 @@
     makeCoffee(shots: number): CoffeeCup;
   }
 
-  class CoffeeMachine implements CoffeeMaker {
+  interface CommercialCoffeeMaker {
+    makeCoffee(shots: number): CoffeeCup;
+    fillCoffeeBeans(beans: number): void;
+    clean(): void;
+  }
+
+  class CoffeeMachine implements CoffeeMaker, CommercialCoffeeMaker {
     private static BEANS_GRAMM_PER_SHOT = 7;
     private cooffeeBeans: number = 0;
 
@@ -36,6 +42,10 @@
         throw new Error("value for beans should be greater than 0");
       }
       this.cooffeeBeans += beans;
+    }
+
+    clean() {
+      console.log(`cleaning the machine`);
     }
 
     private grindBeans(shots: number) {
@@ -67,11 +77,34 @@
   }
 
   const maker: CoffeeMachine = CoffeeMachine.makeMachine(32);
-  maker.fillCoffeeBeans(3);
-  maker.makeCoffee(2);
+  /* maker.fillCoffeeBeans(3);
+  maker.makeCoffee(2); */
   // 추상화: 정말 필요한 함수만 노출해서 양식을 좀 더 간단하고 심플하게 만드는 것
 
-  const maker2: CoffeeMaker = CoffeeMachine.makeMachine(32);
-  //maker2.fillCoffeeBeans(3); //error: CoffeeMaker interface에 정의된것이 없음.
+  const maker2: CommercialCoffeeMaker = CoffeeMachine.makeMachine(32);
+  /* maker.fillCoffeeBeans(32);
   maker2.makeCoffee(2);
+  maker2.clean(); */
+
+  class AmateurUser {
+    constructor(private machine: CoffeeMaker) {}
+    makeCoffee() {
+      const coffee = this.machine.makeCoffee(2);
+      console.log(coffee);
+    }
+  }
+
+  class ProBarista {
+    constructor(private machine: CommercialCoffeeMaker) {}
+    makeCoffee() {
+      const coffee = this.machine.makeCoffee(2);
+      console.log(coffee);
+      this.machine.fillCoffeeBeans(4);
+      this.machine.clean();
+    }
+  }
+  const maker3: CoffeeMachine = CoffeeMachine.makeMachine(32);
+  const amateur = new AmateurUser(maker3);
+  const pro = new ProBarista(maker3);
+  pro.makeCoffee();
 }
